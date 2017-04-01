@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Check-In Conformation</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="jquery.min.js"></script>
+  <script src="sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="sweetalert.css">
+  <script type="text/javascript">
+$(document).ready(function(){
+    $("form").submit(function(e){
+      var bla = "PNR=" + $('#PNR_no').val();
+      console.log(bla);
+      $.get("checkinConfirm.php?"+bla, function(data, status){
+        console.log(data);
+        if(data.hasOwnProperty('error'))
+        {
+          if(data['error'].indexOf("Invalid")!== -1)
+          {
+            swal("Oops...", "Invalid PNR Entered!", "error");
+          }
+          if(data['error'].indexOf("Updated")!== -1)
+          {
+            swal("Oops...", "An error occured while updating!", "error");
+          }
+        }
+        else if(data.hasOwnProperty('warning'))
+        {
+            swal("Updated", "Registration information not present!", "warning");
+        }
+        else
+        {
+          if(data.hasOwnProperty('errors'))
+          {
+            swal("Updated", "Notification not Sent!", "warning");
+          }
+          else
+            swal("Updated","Notification has been sent!","success");   
+        }
+        
+        $('#PNR_no').val("");
+        },"json");
+        e.preventDefault();    
+    });
+});
+  </script>
+</head>
+<body>
+<form>
+  <label for="pnr">Check-In Confirmation</label>
+  <input type="pnr" id="PNR_no" value="" name="pnr" placeholder="PNR Number" required>
+  <input type="submit" value="Confirm" name="subscribe">
+</form>
+</body>
+</html>
